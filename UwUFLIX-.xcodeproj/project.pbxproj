@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0D4122E82C6C0D900062152D /* UwUFLIX_App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4122E72C6C0D900062152D /* UwUFLIX_App.swift */; };
 		0D4122EA2C6C0D900062152D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4122E92C6C0D900062152D /* ContentView.swift */; };
 		0D4122EC2C6C0D910062152D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D4122EB2C6C0D910062152D /* Assets.xcassets */; };
 		0D4122EF2C6C0D910062152D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D4122EE2C6C0D910062152D /* Preview Assets.xcassets */; };
@@ -35,7 +34,6 @@
 
 /* Begin PBXFileReference section */
 		0D4122E42C6C0D900062152D /* UwUFLIX-.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UwUFLIX-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0D4122E72C6C0D900062152D /* UwUFLIX_App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UwUFLIX_App.swift; sourceTree = "<group>"; };
 		0D4122E92C6C0D900062152D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0D4122EB2C6C0D910062152D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0D4122EE2C6C0D910062152D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 		0D4122E62C6C0D900062152D /* UwUFLIX- */ = {
 			isa = PBXGroup;
 			children = (
-				0D4122E72C6C0D900062152D /* UwUFLIX_App.swift */,
 				0D4122E92C6C0D900062152D /* ContentView.swift */,
 				0D4122EB2C6C0D910062152D /* Assets.xcassets */,
 				0D4122ED2C6C0D910062152D /* Preview Content */,
@@ -258,7 +255,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D4122EA2C6C0D900062152D /* ContentView.swift in Sources */,
-				0D4122E82C6C0D900062152D /* UwUFLIX_App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
