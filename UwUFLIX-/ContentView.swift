@@ -39,7 +39,7 @@ struct ContentView: View {
             Color.black.edgesIgnoringSafeArea(.all)
 
             if let profile = selectedProfile, showFilmMenu {
-                FilmMenuView(profile: profile, showFilmMenu: $showFilmMenu, showProfileSelection: $showProfileSelection)
+                FilmMenuView()  // Erstellen einer Instanz von FilmMenuView
             } else if showProfileSelection {
                 VStack {
                     Spacer()
@@ -328,15 +328,14 @@ struct EditProfileMenu: View {
                     .padding(.horizontal, 20)
 
                 Button("Save Changes") {
-                    if !newProfileName.isEmpty {
-                        if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
-                            profiles[index] = Profile(id: profile.id, name: newProfileName, imageData: selectedImageData)
-                            saveProfiles()
-                            showMenu = false
-                        }
+                    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
+                        profiles[index].name = newProfileName
+                        profiles[index].imageData = selectedImageData
+                        saveProfiles()
+                        showMenu = false
                     }
                 }
-                .buttonStyle(ProfileButtonStyle(color: .yellow))
+                .buttonStyle(ProfileButtonStyle(color: .blue))
                 .padding(.top, 20)
 
                 Spacer()
@@ -388,7 +387,6 @@ struct DeleteProfileConfirmation: View {
     var body: some View {
         VStack {
             Text("Are you sure you want to delete this profile?")
-                .font(.headline)
                 .foregroundColor(.white)
                 .padding()
 
@@ -407,14 +405,12 @@ struct DeleteProfileConfirmation: View {
                 }
                 .buttonStyle(ProfileButtonStyle(color: .red))
             }
-            .padding(.top, 20)
+            .padding()
         }
         .padding()
         .background(Color.black)
         .cornerRadius(20)
         .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
     }
 
     func saveProfiles() {
@@ -424,76 +420,98 @@ struct DeleteProfileConfirmation: View {
     }
 }
 
-// FilmMenuView
+import SwiftUI
+import AVKit
+
+// FilmMenuView mit verbessertem Design
 struct FilmMenuView: View {
-    var profile: Profile
-    @Binding var showFilmMenu: Bool
-    @Binding var showProfileSelection: Bool
-
-    let movies = [
-        Movie(id: UUID(), title: "The Godfather", posterImage: "godfather_poster"),
-        Movie(id: UUID(), title: "Inception", posterImage: "inception_poster"),
-        Movie(id: UUID(), title: "Avatar", posterImage: "avatar_image")
-    ]
-
-    private let gridItems = [GridItem(.adaptive(minimum: 150))]
+    @State private var movies: [Movie] = []
 
     var body: some View {
         VStack {
-            // Header
-            VStack {
-                Text("Welcome, \(profile.name)!")
-                    .font(.largeTitle)
-                    .foregroundColor(.white)
-                    .padding(.bottom, 20)
-                
-                Text("Select a Movie")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .padding(.bottom, 10)
-            }
-            .padding()
+            Text("Available Movies")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding()
 
-            // Movie Grid
-            ScrollView {
-                LazyVGrid(columns: gridItems, spacing: 20) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 20) {
                     ForEach(movies) { movie in
                         VStack {
-                            Image(movie.posterImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(height: 200)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 2)
-                                )
-                                .shadow(radius: 10)
-                            
+                            if let image = UIImage(contentsOfFile: movie.posterImage) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 150, height: 225)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 10)
+                            } else {
+                                Rectangle()
+                                    .fill(Color.gray)
+                                    .frame(width: 150, height: 225)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        Text("No Image")
+                                            .foregroundColor(.white)
+                                            .font(.caption)
+                                    )
+                                    .shadow(radius: 10)
+                            }
+
                             Text(movie.title)
-                                .font(.headline)
                                 .foregroundColor(.white)
+                                .font(.headline)
                                 .padding(.top, 5)
-                        }
-                        .onTapGesture {
-                            // Handle movie selection
-                            print("\(movie.title) selected")
                         }
                     }
                 }
                 .padding()
             }
-
-            Spacer()
-
-            // Back Button
-            Button("Back to Profiles") {
-                showFilmMenu = false
-                showProfileSelection = true
-            }
-            .buttonStyle(ProfileButtonStyle(color: .gray))
-            .padding(.bottom, 30)
+            .background(LinearGradient(gradient: Gradient(colors: [Color.black, Color.gray]), startPoint: .top, endPoint: .bottom))
+            .cornerRadius(20)
+            .padding()
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
+        .onAppear {
+            loadMovies()
+        }
+    }
+
+    func loadMovies() {
+        let fileManager = FileManager.default
+        guard let moviesDirectory = Bundle.main.resourcePath.map({ $0 + "/Movies" }) else {
+            print("Movies directory not found")
+            return
+        }
+
+        print("Movies directory path: \(moviesDirectory)")
+        
+        do {
+            let movieDirectories = try fileManager.contentsOfDirectory(atPath: moviesDirectory)
+            for directory in movieDirectories {
+                let moviePath = moviesDirectory + "/\(directory)"
+                let posterImagePath = try fileManager.contentsOfDirectory(atPath: moviePath).first { $0.hasSuffix(".jpg") }
+
+                if let posterImagePath = posterImagePath {
+                    let posterFullPath = moviePath + "/\(posterImagePath)"
+                    if fileManager.fileExists(atPath: posterFullPath) {
+                        let movie = Movie(id: UUID(), title: directory, posterImage: posterFullPath)
+                        movies.append(movie)
+                        print("Loaded movie: \(movie.title) with poster: \(movie.posterImage)")
+                    } else {
+                        print("Poster image file does not exist at path: \(posterFullPath)")
+                    }
+                } else {
+                    print("No .jpg file found in directory: \(moviePath)")
+                }
+            }
+
+            if movies.isEmpty {
+                print("No movies were found in the directory.")
+            }
+
+        } catch {
+            print("Error loading movies: \(error.localizedDescription)")
+        }
     }
 }
