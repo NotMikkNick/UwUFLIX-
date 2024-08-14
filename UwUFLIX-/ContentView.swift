@@ -9,6 +9,13 @@ struct Profile: Identifiable, Codable {
     var imageData: Data?
 }
 
+// Define the Movie model
+struct Movie: Identifiable {
+    var id: UUID
+    var title: String
+    var posterImage: String
+}
+
 @main
 struct MyApp: App {
     var body: some Scene {
@@ -321,11 +328,12 @@ struct EditProfileMenu: View {
                     .padding(.horizontal, 20)
 
                 Button("Save Changes") {
-                    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
-                        profiles[index].name = newProfileName
-                        profiles[index].imageData = selectedImageData
-                        saveProfiles()
-                        showMenu = false
+                    if !newProfileName.isEmpty {
+                        if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
+                            profiles[index] = Profile(id: profile.id, name: newProfileName, imageData: selectedImageData)
+                            saveProfiles()
+                            showMenu = false
+                        }
                     }
                 }
                 .buttonStyle(ProfileButtonStyle(color: .yellow))
@@ -379,23 +387,25 @@ struct DeleteProfileConfirmation: View {
 
     var body: some View {
         VStack {
-            Text("Are you sure you want to delete \(profile.name)?")
-                .font(.title)
+            Text("Are you sure you want to delete this profile?")
+                .font(.headline)
                 .foregroundColor(.white)
                 .padding()
 
             HStack {
-                Button("Delete") {
-                    profiles.removeAll { $0.id == profile.id }
-                    saveProfiles()
-                    showConfirmation = false
-                }
-                .buttonStyle(ProfileButtonStyle(color: .red))
-
                 Button("Cancel") {
                     showConfirmation = false
                 }
                 .buttonStyle(ProfileButtonStyle(color: .gray))
+
+                Button("Delete") {
+                    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
+                        profiles.remove(at: index)
+                        saveProfiles()
+                        showConfirmation = false
+                    }
+                }
+                .buttonStyle(ProfileButtonStyle(color: .red))
             }
             .padding(.top, 20)
         }
@@ -405,7 +415,6 @@ struct DeleteProfileConfirmation: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 
     func saveProfiles() {
@@ -421,48 +430,70 @@ struct FilmMenuView: View {
     @Binding var showFilmMenu: Bool
     @Binding var showProfileSelection: Bool
 
-    let movies = ["The Godfather", "Inception", "Avatar"] // Beispielhafte Filmtitel
+    let movies = [
+        Movie(id: UUID(), title: "The Godfather", posterImage: "godfather_poster"),
+        Movie(id: UUID(), title: "Inception", posterImage: "inception_poster"),
+        Movie(id: UUID(), title: "Avatar", posterImage: "avatar_image")
+    ]
+
+    private let gridItems = [GridItem(.adaptive(minimum: 150))]
 
     var body: some View {
         VStack {
-            Spacer()
+            // Header
+            VStack {
+                Text("Welcome, \(profile.name)!")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .padding(.bottom, 20)
+                
+                Text("Select a Movie")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .padding(.bottom, 10)
+            }
+            .padding()
 
-            Text("Welcome, \(profile.name)!")
-                .font(.largeTitle)
-                .foregroundColor(.white)
-                .padding(.bottom, 50)
-
-            Text("Select a Movie")
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding(.bottom, 20)
-
-            ForEach(movies, id: \.self) { movie in
-                Button(action: {
-                    // Aktion für die Filmauswahl
-                    print("\(movie) selected")
-                }) {
-                    Text(movie)
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.8))
-                        .cornerRadius(10)
-                        .padding(.horizontal, 20)
+            // Movie Grid
+            ScrollView {
+                LazyVGrid(columns: gridItems, spacing: 20) {
+                    ForEach(movies) { movie in
+                        VStack {
+                            Image(movie.posterImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 200)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white, lineWidth: 2)
+                                )
+                                .shadow(radius: 10)
+                            
+                            Text(movie.title)
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding(.top, 5)
+                        }
+                        .onTapGesture {
+                            // Handle movie selection
+                            print("\(movie.title) selected")
+                        }
+                    }
                 }
+                .padding()
             }
 
             Spacer()
 
+            // Back Button
             Button("Back to Profiles") {
                 showFilmMenu = false
                 showProfileSelection = true
             }
             .buttonStyle(ProfileButtonStyle(color: .gray))
-            .padding(.bottom, 50)
+            .padding(.bottom, 30)
         }
-        .padding()
         .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 }
