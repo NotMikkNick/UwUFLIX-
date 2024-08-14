@@ -1,8 +1,7 @@
-//
-//  Profile.swift
-//  UwUFLIX-
-//
-//  Created by Marwin on 14.08.24.
-//
-
 import Foundation
+
+struct Profile: Identifiable, Codable {
+    var id = UUID()
+    var name: String
+    var imageData: Data?
+}

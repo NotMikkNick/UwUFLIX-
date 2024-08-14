@@ -1,18 +1,53 @@
-//
-//  FilmMenuView.swift
-//  UwUFLIX-
-//
-//  Created by Marwin on 14.08.24.
-//
-
 import SwiftUI
 
 struct FilmMenuView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+        VStack {
+            Text("For Everyone.")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding(.top, 40)
 
-#Preview {
-    FilmMenuView()
+            HStack {
+                Button(action: {
+                    // Action for Series
+                }) {
+                    Text("Series")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.gray)
+                        .cornerRadius(10)
+                }
+
+                Button(action: {
+                    // Action for Films
+                }) {
+                    Text("Films")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.gray)
+                        .cornerRadius(10)
+                }
+
+                Menu("Categories") {
+                    Button("Action", action: {})
+                    Button("Comedy", action: {})
+                    Button("Drama", action: {})
+                    Button("Horror", action: {})
+                }
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.gray)
+                .cornerRadius(10)
+            }
+            .padding(.top, 20)
+
+            Spacer()
+
+            // Add your film grid or list here
+
+            Spacer()
+        }
+        .background(Color.black.edgesIgnoringSafeArea(.all))
+    }
 }

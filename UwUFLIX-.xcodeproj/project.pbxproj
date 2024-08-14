@@ -7,6 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D054E0A2C6C25700026847B /* intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E092C6C25700026847B /* intro.mp4 */; };
+		0D054E0B2C6C25700026847B /* intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E092C6C25700026847B /* intro.mp4 */; };
+		0D054E0C2C6C25700026847B /* intro.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E092C6C25700026847B /* intro.mp4 */; };
+		0D054E0E2C6C25760026847B /* P.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E0D2C6C25760026847B /* P.png */; };
+		0D054E0F2C6C25760026847B /* P.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E0D2C6C25760026847B /* P.png */; };
+		0D054E102C6C25760026847B /* P.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E0D2C6C25760026847B /* P.png */; };
+		0D054E212C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E112C6C2D2C0026847B /* (Circus Hop)english.mp4 */; };
+		0D054E222C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E112C6C2D2C0026847B /* (Circus Hop)english.mp4 */; };
+		0D054E232C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E112C6C2D2C0026847B /* (Circus Hop)english.mp4 */; };
+		0D054E242C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E122C6C2D2C0026847B /* (Circus Hop)sing along.mp4 */; };
+		0D054E252C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E122C6C2D2C0026847B /* (Circus Hop)sing along.mp4 */; };
+		0D054E262C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E122C6C2D2C0026847B /* (Circus Hop)sing along.mp4 */; };
+		0D054E272C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E142C6C2D2C0026847B /* (Circus Hop)poster.jpg */; };
+		0D054E282C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E142C6C2D2C0026847B /* (Circus Hop)poster.jpg */; };
+		0D054E292C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E142C6C2D2C0026847B /* (Circus Hop)poster.jpg */; };
+		0D054E2A2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E162C6C2D2C0026847B /* (Trash Talkin')english.mp4 */; };
+		0D054E2B2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E162C6C2D2C0026847B /* (Trash Talkin')english.mp4 */; };
+		0D054E2C2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E162C6C2D2C0026847B /* (Trash Talkin')english.mp4 */; };
+		0D054E2D2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E172C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 */; };
+		0D054E2E2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E172C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 */; };
+		0D054E2F2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E172C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 */; };
+		0D054E302C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E192C6C2D2C0026847B /* (Trash Talkin')poster.jpg */; };
+		0D054E312C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E192C6C2D2C0026847B /* (Trash Talkin')poster.jpg */; };
+		0D054E322C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E192C6C2D2C0026847B /* (Trash Talkin')poster.jpg */; };
+		0D054E332C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1B2C6C2D2C0026847B /* (You'll be Gone)english.mp4 */; };
+		0D054E342C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1B2C6C2D2C0026847B /* (You'll be Gone)english.mp4 */; };
+		0D054E352C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1B2C6C2D2C0026847B /* (You'll be Gone)english.mp4 */; };
+		0D054E362C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1C2C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 */; };
+		0D054E372C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1C2C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 */; };
+		0D054E382C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1C2C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 */; };
+		0D054E392C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1E2C6C2D2C0026847B /* (You'll be Gone)poster.jpg */; };
+		0D054E3A2C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1E2C6C2D2C0026847B /* (You'll be Gone)poster.jpg */; };
+		0D054E3B2C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E1E2C6C2D2C0026847B /* (You'll be Gone)poster.jpg */; };
+		0D054E712C6C34E20026847B /* Notizen in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E702C6C34E20026847B /* Notizen */; };
+		0D054E722C6C34E20026847B /* Notizen in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E702C6C34E20026847B /* Notizen */; };
+		0D054E732C6C34E20026847B /* Notizen in Resources */ = {isa = PBXBuildFile; fileRef = 0D054E702C6C34E20026847B /* Notizen */; };
 		0D4122EA2C6C0D900062152D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4122E92C6C0D900062152D /* ContentView.swift */; };
 		0D4122EC2C6C0D910062152D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D4122EB2C6C0D910062152D /* Assets.xcassets */; };
 		0D4122EF2C6C0D910062152D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D4122EE2C6C0D910062152D /* Preview Assets.xcassets */; };
@@ -33,6 +69,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D054E092C6C25700026847B /* intro.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = intro.mp4; sourceTree = "<group>"; };
+		0D054E0D2C6C25760026847B /* P.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = P.png; sourceTree = "<group>"; };
+		0D054E112C6C2D2C0026847B /* (Circus Hop)english.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(Circus Hop)english.mp4"; sourceTree = "<group>"; };
+		0D054E122C6C2D2C0026847B /* (Circus Hop)sing along.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(Circus Hop)sing along.mp4"; sourceTree = "<group>"; };
+		0D054E142C6C2D2C0026847B /* (Circus Hop)poster.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "(Circus Hop)poster.jpg"; sourceTree = "<group>"; };
+		0D054E162C6C2D2C0026847B /* (Trash Talkin')english.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(Trash Talkin')english.mp4"; sourceTree = "<group>"; };
+		0D054E172C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(Trash Talkin')stuck in my head.mp4"; sourceTree = "<group>"; };
+		0D054E192C6C2D2C0026847B /* (Trash Talkin')poster.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "(Trash Talkin')poster.jpg"; sourceTree = "<group>"; };
+		0D054E1B2C6C2D2C0026847B /* (You'll be Gone)english.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(You'll be Gone)english.mp4"; sourceTree = "<group>"; };
+		0D054E1C2C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "(You'll be Gone)ROUMOR.mp4"; sourceTree = "<group>"; };
+		0D054E1E2C6C2D2C0026847B /* (You'll be Gone)poster.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "(You'll be Gone)poster.jpg"; sourceTree = "<group>"; };
+		0D054E702C6C34E20026847B /* Notizen */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notizen; sourceTree = "<group>"; };
 		0D4122E42C6C0D900062152D /* UwUFLIX-.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UwUFLIX-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D4122E92C6C0D900062152D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0D4122EB2C6C0D910062152D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -69,9 +117,74 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D054E132C6C2D2C0026847B /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E112C6C2D2C0026847B /* (Circus Hop)english.mp4 */,
+				0D054E122C6C2D2C0026847B /* (Circus Hop)sing along.mp4 */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		0D054E152C6C2D2C0026847B /* Circus Hop */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E132C6C2D2C0026847B /* assets */,
+				0D054E142C6C2D2C0026847B /* (Circus Hop)poster.jpg */,
+			);
+			path = "Circus Hop";
+			sourceTree = "<group>";
+		};
+		0D054E182C6C2D2C0026847B /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E162C6C2D2C0026847B /* (Trash Talkin')english.mp4 */,
+				0D054E172C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		0D054E1A2C6C2D2C0026847B /* Trash Talkin' */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E182C6C2D2C0026847B /* assets */,
+				0D054E192C6C2D2C0026847B /* (Trash Talkin')poster.jpg */,
+			);
+			path = "Trash Talkin'";
+			sourceTree = "<group>";
+		};
+		0D054E1D2C6C2D2C0026847B /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E1B2C6C2D2C0026847B /* (You'll be Gone)english.mp4 */,
+				0D054E1C2C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
+		0D054E1F2C6C2D2C0026847B /* You'll be Gone */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E1D2C6C2D2C0026847B /* assets */,
+				0D054E1E2C6C2D2C0026847B /* (You'll be Gone)poster.jpg */,
+			);
+			path = "You'll be Gone";
+			sourceTree = "<group>";
+		};
+		0D054E202C6C2D2C0026847B /* Movies */ = {
+			isa = PBXGroup;
+			children = (
+				0D054E152C6C2D2C0026847B /* Circus Hop */,
+				0D054E1A2C6C2D2C0026847B /* Trash Talkin' */,
+				0D054E1F2C6C2D2C0026847B /* You'll be Gone */,
+			);
+			path = Movies;
+			sourceTree = "<group>";
+		};
 		0D4122DB2C6C0D900062152D = {
 			isa = PBXGroup;
 			children = (
+				0D054E202C6C2D2C0026847B /* Movies */,
 				0D4122E62C6C0D900062152D /* UwUFLIX- */,
 				0D4122F72C6C0D910062152D /* UwUFLIX-Tests */,
 				0D4123012C6C0D910062152D /* UwUFLIX-UITests */,
@@ -94,7 +207,10 @@
 			children = (
 				0D4122E92C6C0D900062152D /* ContentView.swift */,
 				0D4122EB2C6C0D910062152D /* Assets.xcassets */,
+				0D054E0D2C6C25760026847B /* P.png */,
+				0D054E092C6C25700026847B /* intro.mp4 */,
 				0D4122ED2C6C0D910062152D /* Preview Content */,
+				0D054E702C6C34E20026847B /* Notizen */,
 			);
 			path = "UwUFLIX-";
 			sourceTree = "<group>";
@@ -228,8 +344,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D054E2A2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */,
+				0D054E0E2C6C25760026847B /* P.png in Resources */,
+				0D054E712C6C34E20026847B /* Notizen in Resources */,
+				0D054E392C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */,
+				0D054E2D2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */,
+				0D054E212C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */,
+				0D054E302C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */,
+				0D054E272C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */,
+				0D054E242C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */,
+				0D054E332C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */,
 				0D4122EF2C6C0D910062152D /* Preview Assets.xcassets in Resources */,
 				0D4122EC2C6C0D910062152D /* Assets.xcassets in Resources */,
+				0D054E362C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */,
+				0D054E0A2C6C25700026847B /* intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +365,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D054E2E2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */,
+				0D054E342C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */,
+				0D054E3A2C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */,
+				0D054E252C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */,
+				0D054E312C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */,
+				0D054E372C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */,
+				0D054E222C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */,
+				0D054E282C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */,
+				0D054E722C6C34E20026847B /* Notizen in Resources */,
+				0D054E0F2C6C25760026847B /* P.png in Resources */,
+				0D054E2B2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */,
+				0D054E0B2C6C25700026847B /* intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,6 +384,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D054E2F2C6C2D2C0026847B /* (Trash Talkin')stuck in my head.mp4 in Resources */,
+				0D054E352C6C2D2C0026847B /* (You'll be Gone)english.mp4 in Resources */,
+				0D054E3B2C6C2D2C0026847B /* (You'll be Gone)poster.jpg in Resources */,
+				0D054E262C6C2D2C0026847B /* (Circus Hop)sing along.mp4 in Resources */,
+				0D054E322C6C2D2C0026847B /* (Trash Talkin')poster.jpg in Resources */,
+				0D054E382C6C2D2C0026847B /* (You'll be Gone)ROUMOR.mp4 in Resources */,
+				0D054E232C6C2D2C0026847B /* (Circus Hop)english.mp4 in Resources */,
+				0D054E292C6C2D2C0026847B /* (Circus Hop)poster.jpg in Resources */,
+				0D054E732C6C34E20026847B /* Notizen in Resources */,
+				0D054E102C6C25760026847B /* P.png in Resources */,
+				0D054E2C2C6C2D2C0026847B /* (Trash Talkin')english.mp4 in Resources */,
+				0D054E0C2C6C25700026847B /* intro.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

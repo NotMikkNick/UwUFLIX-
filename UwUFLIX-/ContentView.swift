@@ -1,6 +1,13 @@
 import SwiftUI
-import AVKit
 import PhotosUI
+import AVKit
+
+// Define the Profile model
+struct Profile: Identifiable, Codable {
+    var id = UUID()
+    var name: String
+    var imageData: Data?
+}
 
 @main
 struct MyApp: App {
@@ -18,16 +25,19 @@ struct ContentView: View {
     @State private var selectedProfile: Profile? = nil
     @State private var showEditProfileMenu = false
     @State private var showDeleteConfirmation = false
+    @State private var showFilmMenu = false
 
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
 
-            if showProfileSelection {
+            if let profile = selectedProfile, showFilmMenu {
+                FilmMenuView(profile: profile, showFilmMenu: $showFilmMenu, showProfileSelection: $showProfileSelection)
+            } else if showProfileSelection {
                 VStack {
                     Spacer()
 
-                    VStack(spacing: 40) {
+                    VStack(spacing: 20) {
                         ForEach(profiles) { profile in
                             HStack {
                                 if let imageData = profile.imageData, let uiImage = UIImage(data: imageData) {
@@ -70,6 +80,10 @@ struct ContentView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.horizontal, 20)
+                            .onTapGesture {
+                                selectedProfile = profile
+                                showFilmMenu = true
+                            }
                         }
                     }
 
@@ -122,14 +136,22 @@ struct ContentView: View {
             }
         }
     }
+}
 
-    func saveProfiles() {
-        if let encoded = try? JSONEncoder().encode(profiles) {
-            UserDefaults.standard.set(encoded, forKey: "profiles")
-        }
+// ProfileButtonStyle
+struct ProfileButtonStyle: ButtonStyle {
+    var color: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .background(color)
+            .foregroundColor(.white)
+            .cornerRadius(10)
     }
 }
 
+// IntroVideoView
 struct IntroVideoView: View {
     @Binding var showProfileSelection: Bool
     private var player: AVPlayer
@@ -155,12 +177,11 @@ struct IntroVideoView: View {
     }
 }
 
+// AddProfileMenu
 struct AddProfileMenu: View {
     @Binding var profiles: [Profile]
     @Binding var showMenu: Bool
     @State private var newProfileName = ""
-    @State private var password = ""
-    @State private var isPasswordVisible = false
     @State private var selectedImageData: Data? = nil
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var showingImagePicker = false
@@ -181,7 +202,7 @@ struct AddProfileMenu: View {
                         }
                 } else {
                     Rectangle()
-                        .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), startPoint: .top, endPoint: .bottom))
+                        .fill(Color.blue)
                         .frame(width: 180, height: 180)
                         .cornerRadius(20)
                         .padding(.bottom, 40)
@@ -196,48 +217,12 @@ struct AddProfileMenu: View {
                     .cornerRadius(10)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
-                    .placeholder(when: newProfileName.isEmpty) {
-                        Text("Enter Profile Name").foregroundColor(.gray)
-                    }
-
-                HStack {
-                    if isPasswordVisible {
-                        TextField("Password", text: $password)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .padding(.leading, 20)
-                            .placeholder(when: password.isEmpty) {
-                                Text("Password").foregroundColor(.gray)
-                            }
-                    } else {
-                        SecureField("Password", text: $password)
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .padding(.leading, 20)
-                            .placeholder(when: password.isEmpty) {
-                                Text("Password").foregroundColor(.gray)
-                            }
-                    }
-
-                    Button(action: {
-                        isPasswordVisible.toggle()
-                    }) {
-                        Text(isPasswordVisible ? "HIDE" : "SHOW")
-                    }
-                    .foregroundColor(.gray)
-                    .padding(.trailing, 20)
-                }
 
                 Button("Create Profile") {
                     if !newProfileName.isEmpty {
-                        profiles.append(Profile(name: newProfileName, imageData: selectedImageData, password: password))
+                        profiles.append(Profile(name: newProfileName, imageData: selectedImageData))
                         saveProfiles()
                         newProfileName = ""
-                        password = ""
                         selectedImageData = nil
                         showMenu = false
                     }
@@ -285,6 +270,7 @@ struct AddProfileMenu: View {
     }
 }
 
+// EditProfileMenu
 struct EditProfileMenu: View {
     @State private var profile: Profile
     @Binding var profiles: [Profile]
@@ -318,7 +304,7 @@ struct EditProfileMenu: View {
                         }
                 } else {
                     Rectangle()
-                        .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), startPoint: .top, endPoint: .bottom))
+                        .fill(Color.blue)
                         .frame(width: 180, height: 180)
                         .cornerRadius(20)
                         .padding(.bottom, 40)
@@ -333,9 +319,6 @@ struct EditProfileMenu: View {
                     .cornerRadius(10)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
-                    .placeholder(when: newProfileName.isEmpty) {
-                        Text("Enter Profile Name").foregroundColor(.gray)
-                    }
 
                 Button("Save Changes") {
                     if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
@@ -345,7 +328,7 @@ struct EditProfileMenu: View {
                         showMenu = false
                     }
                 }
-                .buttonStyle(ProfileButtonStyle(color: .blue))
+                .buttonStyle(ProfileButtonStyle(color: .yellow))
                 .padding(.top, 20)
 
                 Spacer()
@@ -388,35 +371,33 @@ struct EditProfileMenu: View {
     }
 }
 
+// DeleteProfileConfirmation
 struct DeleteProfileConfirmation: View {
     var profile: Profile
     @Binding var profiles: [Profile]
     @Binding var showConfirmation: Bool
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Are you sure you want to delete this profile?")
+        VStack {
+            Text("Are you sure you want to delete \(profile.name)?")
+                .font(.title)
                 .foregroundColor(.white)
-                .font(.headline)
-                .multilineTextAlignment(.center)
-                .padding(.top, 20)
+                .padding()
 
             HStack {
-                Button("Cancel") {
-                    showConfirmation = false
-                }
-                .buttonStyle(ProfileButtonStyle(color: .gray))
-                .padding(.horizontal, 20)
-
                 Button("Delete") {
                     profiles.removeAll { $0.id == profile.id }
                     saveProfiles()
                     showConfirmation = false
                 }
                 .buttonStyle(ProfileButtonStyle(color: .red))
-                .padding(.horizontal, 20)
+
+                Button("Cancel") {
+                    showConfirmation = false
+                }
+                .buttonStyle(ProfileButtonStyle(color: .gray))
             }
-            .padding(.bottom, 20)
+            .padding(.top, 20)
         }
         .padding()
         .background(Color.black)
@@ -434,34 +415,54 @@ struct DeleteProfileConfirmation: View {
     }
 }
 
-struct Profile: Identifiable, Codable {
-    var id = UUID()
-    var name: String
-    var imageData: Data?
-    var password: String?
-}
+// FilmMenuView
+struct FilmMenuView: View {
+    var profile: Profile
+    @Binding var showFilmMenu: Bool
+    @Binding var showProfileSelection: Bool
 
-struct ProfileButtonStyle: ButtonStyle {
-    var color: Color
+    let movies = ["The Godfather", "Inception", "Avatar"] // Beispielhafte Filmtitel
 
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding()
-            .background(color)
-            .cornerRadius(10)
-            .foregroundColor(.white)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
+    var body: some View {
+        VStack {
+            Spacer()
 
-extension View {
-    func placeholder<Content: View>(
-        when shouldShow: Bool,
-        alignment: Alignment = .leading,
-        @ViewBuilder placeholder: () -> Content) -> some View {
-        ZStack(alignment: alignment) {
-            placeholder().opacity(shouldShow ? 1 : 0)
-            self
+            Text("Welcome, \(profile.name)!")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding(.bottom, 50)
+
+            Text("Select a Movie")
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding(.bottom, 20)
+
+            ForEach(movies, id: \.self) { movie in
+                Button(action: {
+                    // Aktion für die Filmauswahl
+                    print("\(movie) selected")
+                }) {
+                    Text(movie)
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.gray.opacity(0.8))
+                        .cornerRadius(10)
+                        .padding(.horizontal, 20)
+                }
+            }
+
+            Spacer()
+
+            Button("Back to Profiles") {
+                showFilmMenu = false
+                showProfileSelection = true
+            }
+            .buttonStyle(ProfileButtonStyle(color: .gray))
+            .padding(.bottom, 50)
         }
+        .padding()
+        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 }

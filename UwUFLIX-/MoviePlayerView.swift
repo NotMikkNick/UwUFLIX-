@@ -1,18 +1,24 @@
-//
-//  MoviePlayerView.swift
-//  UwUFLIX-
-//
-//  Created by Marwin on 14.08.24.
-//
-
 import SwiftUI
+import AVKit
 
 struct MoviePlayerView: View {
+    var movie: Movie
+    @State private var player: AVPlayer?
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            if let firstVideo = movie.videos.first {
+                VideoPlayer(player: player)
+                    .onAppear {
+                        player = AVPlayer(url: firstVideo)
+                        player?.play()
+                    }
+            } else {
+                Text("No video available")
+                    .font(.headline)
+            }
+        }
     }
 }
 
-#Preview {
-    MoviePlayerView()
-}
+

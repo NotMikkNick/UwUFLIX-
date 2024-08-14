@@ -1,0 +1,15 @@
+Movie data strukture
+/Users/grisa/Documents/UwUFLIX-/Movies/
+├── Movie1/
+│   ├── (Movie1)poster.jpg
+│   └── assets/
+│       ├── (Movie1)english.mp4
+│       ├── (Movie1)german.mp4
+│       └── (Movie1)french.mp4
+├── Movie2/
+│   ├── (Movie2)poster.jpg
+│   └── assets/
+│       ├── (Movie2)english.mp4
+│       └── (Movie2)german.mp4
+
+

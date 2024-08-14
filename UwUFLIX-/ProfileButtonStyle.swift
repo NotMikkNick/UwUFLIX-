@@ -1,18 +1,13 @@
-//
-//  ProfileButtonStyle.swift
-//  UwUFLIX-
-//
-//  Created by Marwin on 14.08.24.
-//
-
 import SwiftUI
 
-struct ProfileButtonStyle: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+struct ProfileButtonStyle: ButtonStyle {
+    var color: Color
 
-#Preview {
-    ProfileButtonStyle()
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .background(color)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+    }
 }

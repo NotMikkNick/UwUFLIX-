@@ -1,8 +1,8 @@
-//
-//  Movie.swift
-//  UwUFLIX-
-//
-//  Created by Marwin on 14.08.24.
-//
+import SwiftUI
 
-import Foundation
+struct Movie: Identifiable {
+    var id = UUID()
+    var title: String
+    var poster: UIImage?
+    var videos: [URL]
+}
