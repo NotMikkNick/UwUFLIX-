@@ -113,7 +113,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            loadProfiles()
+            loadProfiles() // Profile laden, wenn die Ansicht erscheint
         }
         .animation(.easeInOut)
     }
@@ -123,6 +123,12 @@ struct ContentView: View {
             if let decodedProfiles = try? JSONDecoder().decode([Profile].self, from: data) {
                 profiles = decodedProfiles
             }
+        }
+    }
+
+    func saveProfiles() {
+        if let encoded = try? JSONEncoder().encode(profiles) {
+            UserDefaults.standard.set(encoded, forKey: "profiles")
         }
     }
 }
@@ -329,8 +335,8 @@ struct EditProfileMenu: View {
                             profiles[index].name = newProfileName
                             profiles[index].imageData = selectedImageData
                             saveProfiles()
+                            showMenu = false
                         }
-                        showMenu = false
                     }
                 }
                 .buttonStyle(ProfileButtonStyle(color: .yellow))
@@ -356,16 +362,22 @@ struct EditProfileMenu: View {
 }
 
 struct DeleteProfileConfirmation: View {
-    var profile: Profile
+    @State private var profile: Profile
     @Binding var profiles: [Profile]
     @Binding var showConfirmation: Bool
 
+    // Öffentlicher Initialisierer für den Zugriff von außerhalb der Struktur
+    init(profile: Profile, profiles: Binding<[Profile]>, showConfirmation: Binding<Bool>) {
+        self._profile = State(initialValue: profile)
+        self._profiles = profiles
+        self._showConfirmation = showConfirmation
+    }
+
     var body: some View {
         VStack {
-            Text("Are you sure you want to delete \(profile.name)?")
+            Text("Are you sure you want to delete this profile?")
                 .foregroundColor(.white)
-                .font(.title2)
-                .padding()
+                .padding(.top, 20)
 
             HStack {
                 Button("Cancel") {
@@ -374,15 +386,13 @@ struct DeleteProfileConfirmation: View {
                 .buttonStyle(ProfileButtonStyle(color: .gray))
 
                 Button("Delete") {
-                    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
-                        profiles.remove(at: index)
-                        saveProfiles()
-                    }
+                    profiles.removeAll { $0.id == profile.id }
+                    saveProfiles()
                     showConfirmation = false
                 }
                 .buttonStyle(ProfileButtonStyle(color: .red))
             }
-            .padding()
+            .padding(.top, 20)
         }
         .padding()
         .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
@@ -390,7 +400,6 @@ struct DeleteProfileConfirmation: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 
     func saveProfiles() {
@@ -405,17 +414,15 @@ struct MovieSelectionMenu: View {
 
     var body: some View {
         VStack {
-            Text("Select a movie")
+            // Hier können Sie den Code für das Film-Auswahl-Menü hinzufügen
+            Text("Movie Selection Menu")
                 .foregroundColor(.white)
-                .font(.title2)
-                .padding()
 
-            // Add your movie selection UI here
-
-            Button("Cancel") {
+            Button("Close") {
                 showMenu = false
             }
-            .buttonStyle(ProfileButtonStyle(color: .gray))
+            .buttonStyle(ProfileButtonStyle(color: .blue))
+            .padding(.top, 20)
         }
         .padding()
         .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
@@ -423,28 +430,27 @@ struct MovieSelectionMenu: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 }
 
 struct Profile: Identifiable, Codable {
-    var id = UUID()
+    let id = UUID()
     var name: String
-    var imageData: Data?
-    var password: String?
+    var imageData: Data? // Jetzt optional
+    var password: String
 }
 
 struct ProfileButtonStyle: ButtonStyle {
-    let color: Color
+    var color: Color
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .frame(maxWidth: .infinity)
             .padding()
             .background(color)
-            .cornerRadius(10)
             .foregroundColor(.white)
+            .cornerRadius(10)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .opacity(configuration.isPressed ? 0.7 : 1.0)
     }
 }
 
@@ -453,6 +459,7 @@ extension View {
         when shouldShow: Bool,
         alignment: Alignment = .leading,
         @ViewBuilder placeholder: () -> Content) -> some View {
+
         ZStack(alignment: alignment) {
             placeholder().opacity(shouldShow ? 1 : 0)
             self
