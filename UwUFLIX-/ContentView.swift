@@ -1,20 +1,6 @@
 import SwiftUI
-import PhotosUI
 import AVKit
-
-// Define the Profile model
-struct Profile: Identifiable, Codable {
-    var id = UUID()
-    var name: String
-    var imageData: Data?
-}
-
-// Define the Movie model
-struct Movie: Identifiable {
-    var id: UUID
-    var title: String
-    var posterImage: String
-}
+import PhotosUI
 
 @main
 struct MyApp: App {
@@ -32,19 +18,18 @@ struct ContentView: View {
     @State private var selectedProfile: Profile? = nil
     @State private var showEditProfileMenu = false
     @State private var showDeleteConfirmation = false
-    @State private var showFilmMenu = false
+    @State private var showMovieSelectionMenu = false
 
     var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
+            Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1))
+                .edgesIgnoringSafeArea(.all)
 
-            if let profile = selectedProfile, showFilmMenu {
-                FilmMenuView()  // Erstellen einer Instanz von FilmMenuView
-            } else if showProfileSelection {
+            if showProfileSelection {
                 VStack {
                     Spacer()
 
-                    VStack(spacing: 20) {
+                    VStack(spacing: 40) {
                         ForEach(profiles) { profile in
                             HStack {
                                 if let imageData = profile.imageData, let uiImage = UIImage(data: imageData) {
@@ -67,29 +52,27 @@ struct ContentView: View {
 
                                 Spacer()
 
-                                Button(action: {
-                                    selectedProfile = profile
-                                    showDeleteConfirmation.toggle()
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                        .padding()
-                                }
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .padding()
+                                    .onTapGesture {
+                                        selectedProfile = profile
+                                        showDeleteConfirmation.toggle()
+                                    }
 
-                                Button(action: {
-                                    selectedProfile = profile
-                                    showEditProfileMenu.toggle()
-                                }) {
-                                    Image(systemName: "pencil")
-                                        .foregroundColor(.yellow)
-                                        .padding()
-                                }
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.yellow)
+                                    .padding()
+                                    .onTapGesture {
+                                        selectedProfile = profile
+                                        showEditProfileMenu.toggle()
+                                    }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.horizontal, 20)
                             .onTapGesture {
                                 selectedProfile = profile
-                                showFilmMenu = true
+                                showMovieSelectionMenu.toggle()
                             }
                         }
                     }
@@ -103,12 +86,6 @@ struct ContentView: View {
                             .foregroundColor(.white)
                     }
                     .padding(.bottom, 30)
-
-                    Button("Edit Profiles") {
-                        // Action for editing profiles
-                    }
-                    .buttonStyle(ProfileButtonStyle(color: .gray))
-                    .padding(.bottom, 50)
                 }
             } else {
                 IntroVideoView(showProfileSelection: $showProfileSelection)
@@ -129,6 +106,11 @@ struct ContentView: View {
                 DeleteProfileConfirmation(profile: profile, profiles: $profiles, showConfirmation: $showDeleteConfirmation)
                     .transition(.move(edge: .bottom))
             }
+            
+            if showMovieSelectionMenu {
+                MovieSelectionMenu(showMenu: $showMovieSelectionMenu)
+                    .transition(.move(edge: .bottom))
+            }
         }
         .onAppear {
             loadProfiles()
@@ -145,20 +127,6 @@ struct ContentView: View {
     }
 }
 
-// ProfileButtonStyle
-struct ProfileButtonStyle: ButtonStyle {
-    var color: Color
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding()
-            .background(color)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-    }
-}
-
-// IntroVideoView
 struct IntroVideoView: View {
     @Binding var showProfileSelection: Bool
     private var player: AVPlayer
@@ -184,39 +152,45 @@ struct IntroVideoView: View {
     }
 }
 
-// AddProfileMenu
 struct AddProfileMenu: View {
     @Binding var profiles: [Profile]
     @Binding var showMenu: Bool
     @State private var newProfileName = ""
+    @State private var password = ""
+    @State private var isPasswordVisible = false
     @State private var selectedImageData: Data? = nil
-    @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var showingImagePicker = false
+    @State private var selectedImageItem: PhotosPickerItem? = nil
 
     var body: some View {
         VStack {
             VStack(spacing: 20) {
                 Spacer()
 
-                if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
-                        .onTapGesture {
-                            showingImagePicker = true
+                PhotosPicker(
+                    selection: $selectedImageItem,
+                    matching: .images,
+                    photoLibrary: .shared()) {
+                        if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        } else {
+                            Rectangle()
+                                .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), startPoint: .top, endPoint: .bottom))
+                                .frame(width: 180, height: 180)
+                                .cornerRadius(20)
+                                .padding(.bottom, 40)
                         }
-                } else {
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 180, height: 180)
-                        .cornerRadius(20)
-                        .padding(.bottom, 40)
-                        .onTapGesture {
-                            showingImagePicker = true
+                    }
+                    .onChange(of: selectedImageItem) { newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                selectedImageData = data
+                            }
                         }
-                }
+                    }
 
                 TextField("Enter Profile Name", text: $newProfileName)
                     .padding()
@@ -224,12 +198,48 @@ struct AddProfileMenu: View {
                     .cornerRadius(10)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
+                    .placeholder(when: newProfileName.isEmpty) {
+                        Text("Enter Profile Name").foregroundColor(.gray)
+                    }
+
+                HStack {
+                    if isPasswordVisible {
+                        TextField("Password", text: $password)
+                            .padding()
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(10)
+                            .foregroundColor(.white)
+                            .padding(.leading, 20)
+                            .placeholder(when: password.isEmpty) {
+                                Text("Password").foregroundColor(.gray)
+                            }
+                    } else {
+                        SecureField("Password", text: $password)
+                            .padding()
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(10)
+                            .foregroundColor(.white)
+                            .padding(.leading, 20)
+                            .placeholder(when: password.isEmpty) {
+                                Text("Password").foregroundColor(.gray)
+                            }
+                    }
+
+                    Button(action: {
+                        isPasswordVisible.toggle()
+                    }) {
+                        Text(isPasswordVisible ? "HIDE" : "SHOW")
+                    }
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 20)
+                }
 
                 Button("Create Profile") {
                     if !newProfileName.isEmpty {
-                        profiles.append(Profile(name: newProfileName, imageData: selectedImageData))
+                        profiles.append(Profile(name: newProfileName, imageData: selectedImageData, password: password))
                         saveProfiles()
                         newProfileName = ""
+                        password = ""
                         selectedImageData = nil
                         showMenu = false
                     }
@@ -240,34 +250,13 @@ struct AddProfileMenu: View {
                 Spacer()
             }
             .padding()
-            .background(Color.black)
+            .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
             .cornerRadius(20)
             .padding(.horizontal, 20)
             .frame(maxWidth: .infinity)
             .frame(maxHeight: .infinity)
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
-        .sheet(isPresented: $showingImagePicker) {
-            PhotosPicker(
-                selection: $selectedItem,
-                matching: .images
-            ) {
-                Text("Select a Photo")
-            }
-            .onChange(of: selectedItem) { newItem in
-                Task {
-                    if let newItem = newItem {
-                        do {
-                            if let data = try await newItem.loadTransferable(type: Data.self) {
-                                selectedImageData = data
-                            }
-                        } catch {
-                            print("Error loading image data: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            }
-        }
     }
 
     func saveProfiles() {
@@ -277,22 +266,20 @@ struct AddProfileMenu: View {
     }
 }
 
-// EditProfileMenu
 struct EditProfileMenu: View {
     @State private var profile: Profile
     @Binding var profiles: [Profile]
     @Binding var showMenu: Bool
     @State private var newProfileName: String
     @State private var selectedImageData: Data? = nil
-    @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var showingImagePicker = false
+    @State private var selectedImageItem: PhotosPickerItem? = nil
 
     init(profile: Profile, profiles: Binding<[Profile]>, showMenu: Binding<Bool>) {
-        _profile = State(initialValue: profile)
-        _profiles = profiles
-        _showMenu = showMenu
-        _newProfileName = State(initialValue: profile.name)
-        _selectedImageData = State(initialValue: profile.imageData)
+        self._profile = State(initialValue: profile)
+        self._newProfileName = State(initialValue: profile.name)
+        self._profiles = profiles
+        self._showMenu = showMenu
+        self._selectedImageData = State(initialValue: profile.imageData)
     }
 
     var body: some View {
@@ -300,25 +287,31 @@ struct EditProfileMenu: View {
             VStack(spacing: 20) {
                 Spacer()
 
-                if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
-                        .onTapGesture {
-                            showingImagePicker = true
+                PhotosPicker(
+                    selection: $selectedImageItem,
+                    matching: .images,
+                    photoLibrary: .shared()) {
+                        if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        } else {
+                            Rectangle()
+                                .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue]), startPoint: .top, endPoint: .bottom))
+                                .frame(width: 180, height: 180)
+                                .cornerRadius(20)
+                                .padding(.bottom, 40)
                         }
-                } else {
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 180, height: 180)
-                        .cornerRadius(20)
-                        .padding(.bottom, 40)
-                        .onTapGesture {
-                            showingImagePicker = true
+                    }
+                    .onChange(of: selectedImageItem) { newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                selectedImageData = data
+                            }
                         }
-                }
+                    }
 
                 TextField("Enter Profile Name", text: $newProfileName)
                     .padding()
@@ -326,49 +319,33 @@ struct EditProfileMenu: View {
                     .cornerRadius(10)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
+                    .placeholder(when: newProfileName.isEmpty) {
+                        Text("Enter Profile Name").foregroundColor(.gray)
+                    }
 
                 Button("Save Changes") {
-                    if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
-                        profiles[index].name = newProfileName
-                        profiles[index].imageData = selectedImageData
-                        saveProfiles()
+                    if !newProfileName.isEmpty {
+                        if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
+                            profiles[index].name = newProfileName
+                            profiles[index].imageData = selectedImageData
+                            saveProfiles()
+                        }
                         showMenu = false
                     }
                 }
-                .buttonStyle(ProfileButtonStyle(color: .blue))
+                .buttonStyle(ProfileButtonStyle(color: .yellow))
                 .padding(.top, 20)
 
                 Spacer()
             }
             .padding()
-            .background(Color.black)
+            .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
             .cornerRadius(20)
             .padding(.horizontal, 20)
             .frame(maxWidth: .infinity)
             .frame(maxHeight: .infinity)
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
-        .sheet(isPresented: $showingImagePicker) {
-            PhotosPicker(
-                selection: $selectedItem,
-                matching: .images
-            ) {
-                Text("Select a Photo")
-            }
-            .onChange(of: selectedItem) { newItem in
-                Task {
-                    if let newItem = newItem {
-                        do {
-                            if let data = try await newItem.loadTransferable(type: Data.self) {
-                                selectedImageData = data
-                            }
-                        } catch {
-                            print("Error loading image data: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            }
-        }
     }
 
     func saveProfiles() {
@@ -378,7 +355,6 @@ struct EditProfileMenu: View {
     }
 }
 
-// DeleteProfileConfirmation
 struct DeleteProfileConfirmation: View {
     var profile: Profile
     @Binding var profiles: [Profile]
@@ -386,8 +362,9 @@ struct DeleteProfileConfirmation: View {
 
     var body: some View {
         VStack {
-            Text("Are you sure you want to delete this profile?")
+            Text("Are you sure you want to delete \(profile.name)?")
                 .foregroundColor(.white)
+                .font(.title2)
                 .padding()
 
             HStack {
@@ -400,17 +377,20 @@ struct DeleteProfileConfirmation: View {
                     if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
                         profiles.remove(at: index)
                         saveProfiles()
-                        showConfirmation = false
                     }
+                    showConfirmation = false
                 }
                 .buttonStyle(ProfileButtonStyle(color: .red))
             }
             .padding()
         }
         .padding()
-        .background(Color.black)
+        .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
         .cornerRadius(20)
         .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: .infinity)
+        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 
     func saveProfiles() {
@@ -420,98 +400,62 @@ struct DeleteProfileConfirmation: View {
     }
 }
 
-import SwiftUI
-import AVKit
-
-// FilmMenuView mit verbessertem Design
-struct FilmMenuView: View {
-    @State private var movies: [Movie] = []
+struct MovieSelectionMenu: View {
+    @Binding var showMenu: Bool
 
     var body: some View {
         VStack {
-            Text("Available Movies")
-                .font(.largeTitle)
+            Text("Select a movie")
                 .foregroundColor(.white)
+                .font(.title2)
                 .padding()
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) {
-                    ForEach(movies) { movie in
-                        VStack {
-                            if let image = UIImage(contentsOfFile: movie.posterImage) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 150, height: 225)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 10)
-                            } else {
-                                Rectangle()
-                                    .fill(Color.gray)
-                                    .frame(width: 150, height: 225)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        Text("No Image")
-                                            .foregroundColor(.white)
-                                            .font(.caption)
-                                    )
-                                    .shadow(radius: 10)
-                            }
+            // Add your movie selection UI here
 
-                            Text(movie.title)
-                                .foregroundColor(.white)
-                                .font(.headline)
-                                .padding(.top, 5)
-                        }
-                    }
-                }
-                .padding()
+            Button("Cancel") {
+                showMenu = false
             }
-            .background(LinearGradient(gradient: Gradient(colors: [Color.black, Color.gray]), startPoint: .top, endPoint: .bottom))
-            .cornerRadius(20)
-            .padding()
+            .buttonStyle(ProfileButtonStyle(color: .gray))
         }
+        .padding()
+        .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
+        .cornerRadius(20)
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: .infinity)
         .background(Color.black.edgesIgnoringSafeArea(.all))
-        .onAppear {
-            loadMovies()
-        }
     }
+}
 
-    func loadMovies() {
-        let fileManager = FileManager.default
-        guard let moviesDirectory = Bundle.main.resourcePath.map({ $0 + "/Movies" }) else {
-            print("Movies directory not found")
-            return
-        }
+struct Profile: Identifiable, Codable {
+    var id = UUID()
+    var name: String
+    var imageData: Data?
+    var password: String?
+}
 
-        print("Movies directory path: \(moviesDirectory)")
-        
-        do {
-            let movieDirectories = try fileManager.contentsOfDirectory(atPath: moviesDirectory)
-            for directory in movieDirectories {
-                let moviePath = moviesDirectory + "/\(directory)"
-                let posterImagePath = try fileManager.contentsOfDirectory(atPath: moviePath).first { $0.hasSuffix(".jpg") }
+struct ProfileButtonStyle: ButtonStyle {
+    let color: Color
 
-                if let posterImagePath = posterImagePath {
-                    let posterFullPath = moviePath + "/\(posterImagePath)"
-                    if fileManager.fileExists(atPath: posterFullPath) {
-                        let movie = Movie(id: UUID(), title: directory, posterImage: posterFullPath)
-                        movies.append(movie)
-                        print("Loaded movie: \(movie.title) with poster: \(movie.posterImage)")
-                    } else {
-                        print("Poster image file does not exist at path: \(posterFullPath)")
-                    }
-                } else {
-                    print("No .jpg file found in directory: \(moviePath)")
-                }
-            }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .background(color)
+            .cornerRadius(10)
+            .foregroundColor(.white)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+    }
+}
 
-            if movies.isEmpty {
-                print("No movies were found in the directory.")
-            }
-
-        } catch {
-            print("Error loading movies: \(error.localizedDescription)")
+extension View {
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content) -> some View {
+        ZStack(alignment: alignment) {
+            placeholder().opacity(shouldShow ? 1 : 0)
+            self
         }
     }
 }
