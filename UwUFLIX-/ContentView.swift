@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var showEditProfileMenu = false
     @State private var showDeleteConfirmation = false
     @State private var showMovieSelectionMenu = false
+    @State private var selectedMovie: Movie? = nil
 
     var body: some View {
         ZStack {
@@ -106,14 +107,19 @@ struct ContentView: View {
                 DeleteProfileConfirmation(profile: profile, profiles: $profiles, showConfirmation: $showDeleteConfirmation)
                     .transition(.move(edge: .bottom))
             }
-            
+
             if showMovieSelectionMenu {
-                MovieSelectionMenu(showMenu: $showMovieSelectionMenu)
+                MovieSelectionMenu(showMenu: $showMovieSelectionMenu, selectedMovie: $selectedMovie)
                     .transition(.move(edge: .bottom))
+            }
+
+            if let movie = selectedMovie {
+                MovieDetailView(movie: movie, showDetailView: $selectedMovie)
+                    .transition(.move(edge: .trailing))
             }
         }
         .onAppear {
-            loadProfiles() // Profile laden, wenn die Ansicht erscheint
+            loadProfiles()
         }
         .animation(.easeInOut)
     }
@@ -123,12 +129,6 @@ struct ContentView: View {
             if let decodedProfiles = try? JSONDecoder().decode([Profile].self, from: data) {
                 profiles = decodedProfiles
             }
-        }
-    }
-
-    func saveProfiles() {
-        if let encoded = try? JSONEncoder().encode(profiles) {
-            UserDefaults.standard.set(encoded, forKey: "profiles")
         }
     }
 }
@@ -285,7 +285,6 @@ struct EditProfileMenu: View {
         self._newProfileName = State(initialValue: profile.name)
         self._profiles = profiles
         self._showMenu = showMenu
-        self._selectedImageData = State(initialValue: profile.imageData)
     }
 
     var body: some View {
@@ -298,6 +297,12 @@ struct EditProfileMenu: View {
                     matching: .images,
                     photoLibrary: .shared()) {
                         if let imageData = selectedImageData, let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        } else if let uiImage = UIImage(data: profile.imageData ?? Data()) {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .scaledToFill()
@@ -319,27 +324,29 @@ struct EditProfileMenu: View {
                         }
                     }
 
-                TextField("Enter Profile Name", text: $newProfileName)
+                TextField("Enter New Profile Name", text: $newProfileName)
                     .padding()
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(10)
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .placeholder(when: newProfileName.isEmpty) {
-                        Text("Enter Profile Name").foregroundColor(.gray)
+                        Text("Enter New Profile Name").foregroundColor(.gray)
                     }
 
                 Button("Save Changes") {
                     if !newProfileName.isEmpty {
                         if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
                             profiles[index].name = newProfileName
-                            profiles[index].imageData = selectedImageData
+                            if let data = selectedImageData {
+                                profiles[index].imageData = data
+                            }
                             saveProfiles()
                             showMenu = false
                         }
                     }
                 }
-                .buttonStyle(ProfileButtonStyle(color: .yellow))
+                .buttonStyle(ProfileButtonStyle(color: .green))
                 .padding(.top, 20)
 
                 Spacer()
@@ -362,24 +369,21 @@ struct EditProfileMenu: View {
 }
 
 struct DeleteProfileConfirmation: View {
-    @State private var profile: Profile
+    var profile: Profile
     @Binding var profiles: [Profile]
     @Binding var showConfirmation: Bool
 
-    // Öffentlicher Initialisierer für den Zugriff von außerhalb der Struktur
-    init(profile: Profile, profiles: Binding<[Profile]>, showConfirmation: Binding<Bool>) {
-        self._profile = State(initialValue: profile)
-        self._profiles = profiles
-        self._showConfirmation = showConfirmation
-    }
-
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
+            Spacer()
+
             Text("Are you sure you want to delete this profile?")
                 .foregroundColor(.white)
-                .padding(.top, 20)
+                .multilineTextAlignment(.center)
+                .font(.title)
+                .padding()
 
-            HStack {
+            HStack(spacing: 20) {
                 Button("Cancel") {
                     showConfirmation = false
                 }
@@ -392,7 +396,8 @@ struct DeleteProfileConfirmation: View {
                 }
                 .buttonStyle(ProfileButtonStyle(color: .red))
             }
-            .padding(.top, 20)
+
+            Spacer()
         }
         .padding()
         .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
@@ -400,6 +405,7 @@ struct DeleteProfileConfirmation: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
+        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 
     func saveProfiles() {
@@ -411,18 +417,87 @@ struct DeleteProfileConfirmation: View {
 
 struct MovieSelectionMenu: View {
     @Binding var showMenu: Bool
+    @Binding var selectedMovie: Movie?
 
     var body: some View {
         VStack {
-            // Hier können Sie den Code für das Film-Auswahl-Menü hinzufügen
-            Text("Movie Selection Menu")
-                .foregroundColor(.white)
+            Spacer()
 
-            Button("Close") {
-                showMenu = false
+            VStack(spacing: 20) {
+                Text("Select a Movie")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .padding(.top, 20)
+
+                // You can populate with a list of movies
+                ForEach(Movie.sampleMovies) { movie in
+                    Text(movie.title)
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .onTapGesture {
+                            selectedMovie = movie
+                            showMenu = false
+                        }
+                }
+
+                Spacer()
+
+                Button(action: { showMenu = false }) {
+                    Text("Cancel")
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.red)
+                        .cornerRadius(10)
+                }
+                .padding(.bottom, 20)
             }
-            .buttonStyle(ProfileButtonStyle(color: .blue))
-            .padding(.top, 20)
+            .padding()
+            .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
+            .cornerRadius(20)
+            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
+            .frame(maxHeight: .infinity)
+        }
+        .background(Color.black.edgesIgnoringSafeArea(.all))
+    }
+}
+
+struct MovieDetailView: View {
+    var movie: Movie
+    @Binding var showDetailView: Movie?
+
+    var body: some View {
+        VStack {
+            Text(movie.title)
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding()
+
+            Spacer()
+
+            Text(movie.description)
+                .font(.body)
+                .foregroundColor(.white)
+                .padding()
+
+            Spacer()
+
+            Button(action: { showDetailView = nil }) {
+                Text("Back")
+                    .foregroundColor(.white)
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red)
+                    .cornerRadius(10)
+            }
+            .padding(.bottom, 20)
         }
         .padding()
         .background(Color(#colorLiteral(red: 0.09411764706, green: 0.09411764706, blue: 0.09411764706, alpha: 1)))
@@ -430,14 +505,29 @@ struct MovieSelectionMenu: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
+        .background(Color.black.edgesIgnoringSafeArea(.all))
     }
 }
 
 struct Profile: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     var name: String
-    var imageData: Data? // Jetzt optional
+    var imageData: Data?
     var password: String
+}
+
+struct Movie: Identifiable {
+    var id = UUID()
+    var title: String
+    var description: String
+
+    static var sampleMovies: [Movie] {
+        return [
+            Movie(title: "Inception", description: "A thief who steals corporate secrets through the use of dream-sharing technology."),
+            Movie(title: "Interstellar", description: "A team of explorers travel through a wormhole in space."),
+            Movie(title: "The Dark Knight", description: "Batman faces the Joker in Gotham City.")
+        ]
+    }
 }
 
 struct ProfileButtonStyle: ButtonStyle {
@@ -445,12 +535,11 @@ struct ProfileButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .frame(maxWidth: .infinity)
             .padding()
             .background(color)
-            .foregroundColor(.white)
             .cornerRadius(10)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .foregroundColor(.white)
     }
 }
 
@@ -459,7 +548,6 @@ extension View {
         when shouldShow: Bool,
         alignment: Alignment = .leading,
         @ViewBuilder placeholder: () -> Content) -> some View {
-
         ZStack(alignment: alignment) {
             placeholder().opacity(shouldShow ? 1 : 0)
             self
