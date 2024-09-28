@@ -1,9 +1,9 @@
 import SwiftUI
 import UIKit
 
+// Beispiel ImagePicker, die du bereits als separate Datei hast
 struct ImagePicker: UIViewControllerRepresentable {
-    @Binding var selectedImage: UIImage?
-    var sourceType: UIImagePickerController.SourceType
+    @Binding var image: UIImage?
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -12,7 +12,6 @@ struct ImagePicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
-        picker.sourceType = sourceType
         return picker
     }
 
@@ -26,8 +25,8 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                parent.selectedImage = image
+            if let uiImage = info[.originalImage] as? UIImage {
+                parent.image = uiImage
             }
             picker.dismiss(animated: true)
         }

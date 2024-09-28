@@ -28,10 +28,9 @@ struct ProfileSelectionView: View {
         "Kdo se dívá?", // Tschechisch
         "Kdo gledate?", // Serbisch
         "Cine está mirando?", // Spanisch (alternative)
-        "Kto pozera?", // Slowakisch (alternative)
         "Кто смотрит?", // Russisch (alternative)
         "Kdo gleda?", // Slowenisch (alternative)
-        "M谁在看？", // Chinesisch (alternative)
+            "M谁在看？", // Chinesisch (alternative)
     ]
 
     // Dankesnachricht
@@ -48,110 +47,14 @@ struct ProfileSelectionView: View {
 
                 VStack {
                     // Header-Bereich mit Animation
-                    VStack(spacing: 10) {
-                        Text(currentHeaderText)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.top)
-                            .offset(x: headerTextOffset)
-                            .onAppear {
-                                // Zufällig Dankesnachricht zeigen
-                                if Bool.random() {
-                                    showThankYouMessage = true
-                                }
-                            }
-                            .onChange(of: currentHeaderText) { _ in
-                                // Animation starten, wenn sich der Header-Text ändert
-                                withAnimation(.easeInOut(duration: 1)) {
-                                    headerTextOffset = 0 // Zum Mittelpunkt bewegen
-                                }
-                            }
-                            .onAppear {
-                                headerTextOffset = 300 // Startposition für die Animation
-                            }
-                    }
-                    .padding(.bottom, 20)
+                    headerView
 
                     // Secret Message nur zufällig im Header
                     if showThankYouMessage {
-                        Text(thankYouMessages.randomElement() ?? "")
-                            .font(.subheadline)
-                            .foregroundColor(.green)
-                            .padding(.bottom)
+                        thankYouMessageView
                     }
 
-                    ScrollView {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
-                            ForEach(profileManager.profiles) { profile in
-                                NavigationLink(destination: Text("Hier könnte dein Inhalt für \(profile.name) sein")) {
-                                    VStack {
-                                        ZStack {
-                                            // Statischer Regenbogenrand
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(
-                                                    LinearGradient(gradient: Gradient(colors: rainbowGradient()), startPoint: .topLeading, endPoint: .bottomTrailing),
-                                                    lineWidth: 5
-                                                )
-                                                .frame(width: 110, height: 110)
-
-                                            // Profilbild
-                                            if let image = profile.image {
-                                                image
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 100, height: 100)
-                                                    .cornerRadius(10)
-                                                    .shadow(color: .black, radius: 4)
-                                            } else {
-                                                Rectangle()
-                                                    .fill(Color.gray)
-                                                    .frame(width: 100, height: 100)
-                                                    .cornerRadius(10)
-                                                    .shadow(color: .black, radius: 4)
-                                            }
-                                        }
-
-                                        Text(profile.name)
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                            .multilineTextAlignment(.center)
-                                    }
-                                    .padding()
-                                    .background(Color.clear)
-                                    .cornerRadius(10)
-                                    .transition(.scale)
-                                    .animation(.easeInOut)
-                                }
-                            }
-
-                            // Profil hinzufügen Button mit eigenem Rand
-                            Button(action: {
-                                isPresentingCreationView = true
-                            }) {
-                                VStack {
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.6))
-                                        .frame(width: 100, height: 100)
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            Text("+")
-                                                .font(.largeTitle)
-                                                .foregroundColor(.white)
-                                        )
-                                }
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.blue, lineWidth: 3) // Einfärbung des Rahmens
-                                )
-                            }
-                            .sheet(isPresented: $isPresentingCreationView) {
-                                ProfileCreationView()
-                            }
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity) // Maximale Breite einnehmen für Zentrierung
-                    }
+                    profileGrid
                 }
             }
             .navigationTitle("Profile auswählen")
@@ -164,6 +67,123 @@ struct ProfileSelectionView: View {
             }
         }
         .accentColor(.red) // Rot für Navigation-Link-Farbe
+    }
+
+    private var headerView: some View {
+        VStack(spacing: 10) {
+            Text(currentHeaderText)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.top)
+                .offset(x: headerTextOffset)
+                .onAppear {
+                    // Zufällig Dankesnachricht zeigen
+                    if Bool.random() {
+                        showThankYouMessage = true
+                    }
+                }
+                .onChange(of: currentHeaderText) { _ in
+                    // Animation starten, wenn sich der Header-Text ändert
+                    withAnimation(.easeInOut(duration: 1)) {
+                        headerTextOffset = 0 // Zum Mittelpunkt bewegen
+                    }
+                }
+                .onAppear {
+                    headerTextOffset = 300 // Startposition für die Animation
+                }
+        }
+        .padding(.bottom, 20)
+    }
+
+    private var thankYouMessageView: some View {
+        Text(thankYouMessages.randomElement() ?? "")
+            .font(.subheadline)
+            .foregroundColor(.green)
+            .padding(.bottom)
+    }
+
+    private var profileGrid: some View {
+        ScrollView {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
+                ForEach(profileManager.profiles) { profile in
+                    NavigationLink(destination: Text("Hier könnte dein Inhalt für \(profile.name) sein")) {
+                        profileCard(for: profile)
+                    }
+                }
+
+                // Profil hinzufügen Button mit eigenem Rand
+                addProfileButton
+            }
+            .padding()
+            .frame(maxWidth: .infinity) // Maximale Breite einnehmen für Zentrierung
+        }
+    }
+
+    private func profileCard(for profile: Profile) -> some View {
+        VStack {
+            ZStack {
+                // Statischer Regenbogenrand
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(
+                        LinearGradient(gradient: Gradient(colors: rainbowGradient()), startPoint: .topLeading, endPoint: .bottomTrailing),
+                        lineWidth: 5
+                    )
+                    .frame(width: 110, height: 110)
+
+                // Profilbild
+                if let imageData = profile.image, let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage) // Erstelle ein Image aus UIImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(10)
+                        .shadow(color: .black, radius: 4)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray)
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(10)
+                        .shadow(color: .black, radius: 4)
+                }
+            }
+
+            Text(profile.name)
+                .font(.headline)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+        .background(Color.clear)
+        .cornerRadius(10)
+        .transition(.scale)
+        .animation(.easeInOut)
+    }
+
+    private var addProfileButton: some View {
+        Button(action: {
+            isPresentingCreationView = true
+        }) {
+            VStack {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.6))
+                    .frame(width: 100, height: 100)
+                    .cornerRadius(10)
+                    .overlay(
+                        Text("+")
+                            .font(.largeTitle)
+                            .foregroundColor(.white)
+                    )
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.blue, lineWidth: 3) // Einfärbung des Rahmens
+            )
+        }
+        .sheet(isPresented: $isPresentingCreationView) {
+            ProfileCreationView()
+                .environmentObject(profileManager) // Übergebe das Environment Object hier
+        }
     }
 
     private func startHeaderTextAnimation() {
